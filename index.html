@@ -4,1221 +4,1099 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Swoop Golf — Club Intelligence for General Managers</title>
+<meta name="description" content="Swoop gives private club GMs a complete decision-support platform across five strategic lenses. Fill tee times with the right members.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ink:#0B1A0D;
+  --forest:#1F2F24;
+  --green:#2A4A2C;
+  --moss:#3D6640;
+  --sage:#6B8F6E;
+  --mist:#D4E4D6;
+  --gold:#C9943A;
+  --gold-lt:#E8B05A;
+  --gold-pale:#F5E8D0;
+  --ivory:#F7F5F2;
+  --cream:#EDE8DF;
+  --white:#FFFFFF;
+  --border:rgba(42,74,44,0.12);
+  --text-muted:#6B7A6E;
+  --radius:12px;
+  --shadow:0 4px 24px rgba(11,26,13,0.10);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--ivory);color:var(--ink);overflow-x:hidden;line-height:1.65}
 
-:root {
-  --ink: #0B1A0D;
-  --forest: #1A2F1C;
-  --green: #2A4A2C;
-  --moss: #3D6640;
-  --sage: #6B8F6E;
-  --mist: #D4E4D6;
-  --gold: #C9943A;
-  --gold-light: #E8B05A;
-  --gold-pale: #F5E8D0;
-  --ivory: #F7F3EC;
-  --cream: #EDE8DF;
-  --white: #FFFFFF;
-  --red-risk: #C0392B;
-  --blue-intel: #2563EB;
-  --text-muted: #6B7A6E;
-  --border: rgba(42,74,44,0.12);
-}
+/* ── UTILITY ── */
+.container{max-width:1180px;margin:0 auto;padding:0 40px}
+.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--moss);margin-bottom:16px;display:block}
+.section-title{font-family:'DM Serif Display',serif;font-size:clamp(32px,4vw,50px);line-height:1.1;color:var(--ink);margin-bottom:20px}
+.section-sub{font-size:17px;color:var(--text-muted);max-width:600px;line-height:1.7}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#fff;padding:13px 28px;border-radius:var(--radius);font-weight:600;font-size:15px;text-decoration:none;transition:all .25s;box-shadow:0 2px 16px rgba(201,148,58,.28)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 6px 28px rgba(201,148,58,.4)}
+.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--ink);padding:13px 28px;border-radius:var(--radius);font-weight:600;font-size:15px;text-decoration:none;border:1.5px solid var(--border);transition:all .25s}
+.btn-ghost:hover{border-color:var(--green);background:rgba(42,74,44,.06)}
+.btn-outline-white{display:inline-flex;align-items:center;gap:8px;background:transparent;color:#fff;padding:12px 26px;border-radius:var(--radius);font-weight:600;font-size:14px;text-decoration:none;border:1.5px solid rgba(255,255,255,.35);transition:all .25s}
+.btn-outline-white:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.6)}
+.tag{display:inline-block;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:500;background:var(--mist);color:var(--green)}
 
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'Outfit', sans-serif;
-  background: var(--ivory);
-  color: var(--ink);
-  overflow-x: hidden;
-  line-height: 1.6;
-}
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:68px;background:rgba(11,26,13,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(201,148,58,.12);display:flex;align-items:center;justify-content:space-between;padding:0 48px}
+.nav-logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:#fff}
+.logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-lt));border-radius:8px;display:flex;align-items:center;justify-content:center}
+.logo-icon svg{width:20px;height:20px;fill:#fff}
+.logo-word{font-family:'DM Serif Display',serif;font-size:21px;letter-spacing:.02em;color:#fff}
+.logo-word span{color:var(--gold-lt)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a,.nav-drop>span{font-size:14px;font-weight:500;color:rgba(255,255,255,.6);text-decoration:none;transition:color .2s;cursor:pointer;letter-spacing:.01em}
+.nav-links a:hover,.nav-drop>span:hover{color:#fff}
+.nav-drop{position:relative;display:flex;align-items:center;gap:4px}
+.nav-drop>span::after{content:'▾';font-size:10px;opacity:.6;margin-left:2px}
+.nav-drop:hover .dropdown{display:block}
+.dropdown{display:none;position:absolute;top:100%;left:-16px;margin-top:8px;background:var(--forest);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:8px;min-width:220px;box-shadow:0 16px 48px rgba(0,0,0,.4)}
+.dropdown a{display:block;padding:10px 14px;border-radius:8px;color:rgba(255,255,255,.75);text-decoration:none;font-size:13px;font-weight:500;transition:all .15s}
+.dropdown a:hover{background:rgba(255,255,255,.07);color:#fff}
+.dropdown .dd-label{padding:10px 14px 4px;font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
+.nav-right{display:flex;align-items:center;gap:14px}
+.nav-signin{font-size:14px;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;transition:color .2s}
+.nav-signin:hover{color:#fff}
+.nav-cta{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#fff;padding:9px 22px;border-radius:9px;font-size:14px;font-weight:600;text-decoration:none;transition:all .25s;box-shadow:0 2px 10px rgba(201,148,58,.25)}
+.nav-cta:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(201,148,58,.4)}
 
-/* ─── NAV ─────────────────────────────────────────────── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  height: 68px;
-  background: rgba(11,26,13,0.96);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 56px;
-  border-bottom: 1px solid rgba(201,148,58,0.15);
-}
-.nav-logo {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none; color: var(--white);
-}
-.logo-mark {
-  width: 38px; height: 38px;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  border-radius: 9px;
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'Cormorant Garamond', serif;
-  font-weight: 700; font-size: 20px; color: var(--white);
-  letter-spacing: -0.02em;
-}
-.logo-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 22px; font-weight: 600;
-  letter-spacing: 0.02em;
-}
-.logo-text span { color: var(--gold-light); }
-.nav-center {
-  display: flex; align-items: center; gap: 36px;
-}
-.nav-center a {
-  font-size: 14px; font-weight: 500;
-  color: rgba(255,255,255,0.65);
-  text-decoration: none; transition: color 0.2s;
-  letter-spacing: 0.01em;
-}
-.nav-center a:hover { color: var(--white); }
-.nav-right { display: flex; align-items: center; gap: 16px; }
-.nav-link-plain {
-  font-size: 14px; font-weight: 500; color: rgba(255,255,255,0.6);
-  text-decoration: none; transition: color 0.2s;
-}
-.nav-link-plain:hover { color: var(--white); }
-.nav-cta {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--white); text-decoration: none;
-  padding: 9px 22px; border-radius: 8px;
-  font-size: 14px; font-weight: 600;
-  transition: all 0.25s;
-  box-shadow: 0 2px 12px rgba(201,148,58,0.25);
-}
-.nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(201,148,58,0.35); }
+/* ── HERO ── */
+.hero{min-height:100vh;background:linear-gradient(155deg,#080f09 0%,#0d1a0f 35%,#162619 65%,#1a3020 100%);display:flex;align-items:center;padding:120px 48px 80px;position:relative;overflow:hidden}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(201,148,58,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(201,148,58,.035) 1px,transparent 1px);background-size:72px 72px}
+.hero-glow{position:absolute;top:-15%;right:-5%;width:800px;height:800px;background:radial-gradient(circle,rgba(42,74,44,.35) 0%,transparent 65%);border-radius:50%;pointer-events:none}
+.hero-glow2{position:absolute;bottom:-20%;left:-10%;width:600px;height:600px;background:radial-gradient(circle,rgba(201,148,58,.08) 0%,transparent 65%);border-radius:50%;pointer-events:none}
+.hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1180px;margin:0 auto;width:100%}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,148,58,.12);border:1px solid rgba(201,148,58,.25);border-radius:100px;padding:6px 16px;margin-bottom:28px}
+.hero-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--gold-lt)}
+.hero-badge span{font-size:12px;font-weight:500;color:var(--gold-lt);letter-spacing:.05em}
+.hero h1{font-family:'DM Serif Display',serif;font-size:clamp(42px,5.5vw,70px);line-height:1.0;color:#fff;margin-bottom:24px;letter-spacing:-.01em}
+.hero h1 em{font-style:italic;color:var(--gold-lt)}
+.hero-sub{font-size:18px;color:rgba(255,255,255,.6);line-height:1.75;margin-bottom:40px;max-width:480px}
+.hero-actions{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:36px;margin-top:56px;padding-top:40px;border-top:1px solid rgba(255,255,255,.08)}
+.hero-stat-val{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:600;color:var(--gold-lt)}
+.hero-stat-label{font-size:13px;color:rgba(255,255,255,.45);margin-top:4px}
+.hero-visual{position:relative}
+.dashboard-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:28px;backdrop-filter:blur(12px);animation:floatCard 6s ease-in-out infinite}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.dash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.dash-title{font-family:'DM Serif Display',serif;font-size:16px;color:#fff}
+.dash-date{font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,.4)}
+.dash-kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.kpi-tile{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:16px}
+.kpi-tile.green-bg{background:rgba(42,74,44,.4);border-color:rgba(42,74,44,.6)}
+.kpi-tile.gold-bg{background:rgba(201,148,58,.15);border-color:rgba(201,148,58,.25)}
+.kpi-val{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:600;color:#fff}
+.kpi-label{font-size:11px;color:rgba(255,255,255,.45);margin-top:4px}
+.kpi-delta{font-size:11px;color:#5CC98A;margin-top:6px}
+.kpi-delta.warn{color:var(--gold-lt)}
+.dash-alert{background:rgba(201,148,58,.12);border:1px solid rgba(201,148,58,.2);border-radius:10px;padding:14px;display:flex;gap:12px;align-items:flex-start;margin-bottom:12px}
+.alert-dot{width:8px;height:8px;border-radius:50%;background:var(--gold-lt);margin-top:4px;flex-shrink:0}
+.alert-text{font-size:12px;color:rgba(255,255,255,.7);line-height:1.5}
+.alert-text strong{color:#fff}
+.dash-lens-row{display:flex;gap:8px;flex-wrap:wrap}
+.lens-pill{padding:6px 12px;border-radius:100px;font-size:11px;font-weight:500;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.lens-pill.active{background:rgba(201,148,58,.2);border-color:rgba(201,148,58,.3);color:var(--gold-lt)}
+.float-badge{position:absolute;background:var(--forest);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 16px;box-shadow:0 8px 32px rgba(0,0,0,.4);font-size:13px;color:#fff;font-weight:500;white-space:nowrap}
+.float-badge.top-left{top:-20px;left:-30px;animation:floatBadge 5s ease-in-out infinite}
+.float-badge.bottom-right{bottom:-16px;right:-20px;animation:floatBadge 5s ease-in-out infinite .8s}
+@keyframes floatBadge{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.float-badge .badge-num{font-family:'JetBrains Mono',monospace;color:var(--gold-lt);font-size:15px;font-weight:600}
 
-/* ─── HERO ─────────────────────────────────────────────── */
-.hero {
-  min-height: 100vh;
-  background: linear-gradient(160deg, var(--ink) 0%, var(--forest) 45%, #1E3C20 100%);
-  display: flex; align-items: center;
-  padding: 140px 56px 100px;
-  position: relative; overflow: hidden;
-}
-.hero-bg-grid {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(201,148,58,0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(201,148,58,0.04) 1px, transparent 1px);
-  background-size: 80px 80px;
-}
-.hero-bg-glow {
-  position: absolute; top: -20%; right: -10%;
-  width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(42,74,44,0.4) 0%, transparent 70%);
-  border-radius: 50%;
-}
-.hero-content {
-  position: relative; z-index: 2;
-  max-width: 680px;
-}
-.hero-eyebrow {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: rgba(201,148,58,0.12);
-  border: 1px solid rgba(201,148,58,0.25);
-  color: var(--gold-light);
-  padding: 6px 18px; border-radius: 50px;
-  font-size: 12px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  margin-bottom: 32px;
-}
-.eyebrow-dot {
-  width: 6px; height: 6px;
-  background: var(--gold-light); border-radius: 50%;
-  animation: blink 2s ease-in-out infinite;
-}
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+/* ── TRUSTED ── */
+.trusted{padding:56px 0;background:var(--white);border-bottom:1px solid var(--border)}
+.trusted-inner{display:flex;align-items:center;gap:64px;max-width:1180px;margin:0 auto;padding:0 40px;flex-wrap:wrap}
+.trusted-label{font-size:13px;font-weight:500;color:var(--text-muted);white-space:nowrap;flex-shrink:0}
+.trusted-logos{display:flex;align-items:center;gap:48px;flex-wrap:wrap}
+.club-logo{font-family:'DM Serif Display',serif;font-size:15px;color:#9aaa9d;font-weight:400;letter-spacing:.04em;transition:color .2s}
+.club-logo:hover{color:var(--ink)}
 
-.hero h1 {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 72px; font-weight: 600;
-  line-height: 1.04; color: var(--white);
-  letter-spacing: -0.02em;
-  margin-bottom: 28px;
-}
-.hero h1 .accent { color: var(--gold-light); font-style: italic; }
-.hero h1 .line-break { display: block; }
+/* ── LENSES / PRODUCTS ── */
+.section{padding:96px 0}
+.section.alt{background:var(--white)}
+.section.dark{background:var(--forest);color:#fff}
+.section-header{text-align:center;margin-bottom:64px}
+.section-header .section-sub{margin:0 auto}
+.lenses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.lens-card{background:var(--white);border:1.5px solid var(--border);border-radius:18px;padding:32px;transition:all .3s;position:relative;overflow:hidden}
+.lens-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-lt));opacity:0;transition:opacity .3s}
+.lens-card:hover{border-color:rgba(42,74,44,.25);box-shadow:0 12px 48px rgba(11,26,13,.1);transform:translateY(-4px)}
+.lens-card:hover::before{opacity:1}
+.lens-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--sage);margin-bottom:16px;display:block}
+.lens-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:22px}
+.lens-icon.green{background:rgba(42,74,44,.1)}
+.lens-icon.gold{background:rgba(201,148,58,.12)}
+.lens-icon.blue{background:rgba(37,99,235,.1)}
+.lens-icon.red{background:rgba(220,38,38,.08)}
+.lens-icon.purple{background:rgba(124,58,237,.1)}
+.lens-title{font-family:'DM Serif Display',serif;font-size:21px;color:var(--ink);margin-bottom:10px}
+.lens-desc{font-size:14px;color:var(--text-muted);line-height:1.7;margin-bottom:20px}
+.lens-link{font-size:13px;font-weight:600;color:var(--moss);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:gap .2s}
+.lens-link:hover{gap:10px}
+.lens-card.featured{grid-column:span 2;display:flex;gap:40px;align-items:center;background:linear-gradient(135deg,var(--ink) 0%,var(--forest) 100%);border-color:rgba(255,255,255,.08)}
+.lens-card.featured .lens-num{color:rgba(255,255,255,.35)}
+.lens-card.featured .lens-title{color:#fff}
+.lens-card.featured .lens-desc{color:rgba(255,255,255,.55)}
+.lens-card.featured .lens-link{color:var(--gold-lt)}
+.lens-card.featured::before{background:linear-gradient(90deg,var(--gold),var(--gold-lt));opacity:.6}
+.lens-feat-visual{flex-shrink:0;width:220px}
+.mini-chart{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px}
+.chart-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.chart-bar-label{font-size:11px;color:rgba(255,255,255,.45);width:28px;flex-shrink:0}
+.chart-bar-track{flex:1;height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold-lt))}
 
-.hero-sub {
-  font-size: 19px; color: rgba(255,255,255,0.65);
-  line-height: 1.65; max-width: 520px;
-  margin-bottom: 44px;
-}
-.hero-sub strong { color: rgba(255,255,255,0.9); font-weight: 500; }
+/* ── FEATURE SPOTLIGHTS ── */
+.spotlight{padding:96px 0}
+.spotlight:nth-child(even){background:var(--white)}
+.spotlight-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1180px;margin:0 auto;padding:0 40px}
+.spotlight-inner.reverse{direction:rtl}
+.spotlight-inner.reverse > *{direction:ltr}
+.spotlight-text{}
+.spotlight-text .label{display:block;margin-bottom:12px}
+.spotlight-text h2{font-family:'DM Serif Display',serif;font-size:clamp(30px,3.5vw,44px);line-height:1.12;margin-bottom:18px;color:var(--ink)}
+.spotlight-text p{font-size:16px;color:var(--text-muted);line-height:1.8;margin-bottom:32px}
+.feature-list{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+.feature-list li{display:flex;align-items:flex-start;gap:12px;font-size:14px;color:var(--ink)}
+.feature-list li::before{content:'✓';width:22px;height:22px;border-radius:50%;background:rgba(42,74,44,.1);color:var(--moss);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:1px}
+.spotlight-visual{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:32px;box-shadow:var(--shadow)}
+.spotlight:nth-child(even) .spotlight-visual{background:var(--ivory)}
+.metric-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--border)}
+.metric-row:last-child{border-bottom:none}
+.metric-name{font-size:13px;color:var(--text-muted)}
+.metric-val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:600;color:var(--ink)}
+.metric-delta{font-size:11px;padding:3px 8px;border-radius:100px;font-weight:600}
+.metric-delta.up{background:rgba(22,163,74,.1);color:#15803D}
+.metric-delta.down{background:rgba(220,38,38,.08);color:#DC2626}
+.metric-delta.warn{background:rgba(201,148,58,.15);color:#B45309}
+.playbook-card{background:linear-gradient(135deg,var(--ink),var(--forest));border-radius:16px;padding:24px;margin-bottom:12px}
+.playbook-card h4{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;margin-bottom:8px}
+.playbook-card p{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6}
+.playbook-card .pb-tag{display:inline-block;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:600;background:rgba(201,148,58,.2);color:var(--gold-lt);margin-top:10px}
+.waitlist-vis{background:var(--ivory);border:1.5px solid var(--border);border-radius:16px;overflow:hidden}
+.wl-header{background:var(--forest);padding:16px 20px;display:flex;justify-content:space-between;align-items:center}
+.wl-header-title{font-family:'DM Serif Display',serif;font-size:15px;color:#fff}
+.wl-header-badge{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-lt);background:rgba(201,148,58,.15);padding:3px 10px;border-radius:100px}
+.wl-row{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border)}
+.wl-rank{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--sage);width:20px}
+.wl-avatar{width:34px;height:34px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:14px;color:var(--green);flex-shrink:0}
+.wl-name{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.wl-score{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text-muted)}
+.wl-priority{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.wl-priority.high{background:#EF4444}
+.wl-priority.med{background:var(--gold)}
+.wl-priority.low{background:#22C55E}
 
-.hero-ctas { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 64px; }
-.btn-hero-primary {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--white); text-decoration: none;
-  padding: 16px 38px; border-radius: 10px;
-  font-size: 16px; font-weight: 600;
-  display: inline-flex; align-items: center; gap: 8px;
-  transition: all 0.25s;
-  box-shadow: 0 6px 28px rgba(201,148,58,0.3);
-}
-.btn-hero-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(201,148,58,0.4); }
-.btn-hero-secondary {
-  color: rgba(255,255,255,0.8); text-decoration: none;
-  padding: 16px 32px; border-radius: 10px;
-  font-size: 16px; font-weight: 500;
-  border: 1.5px solid rgba(255,255,255,0.18);
-  transition: all 0.25s;
-}
-.btn-hero-secondary:hover { border-color: rgba(255,255,255,0.4); color: var(--white); background: rgba(255,255,255,0.04); }
+/* ── PROOF / CASE STUDIES ── */
+.proof{padding:96px 0;background:var(--forest)}
+.proof .section-header .section-title{color:#fff}
+.proof .section-header .section-sub{color:rgba(255,255,255,.5)}
+.proof .label{color:rgba(201,148,58,.8)}
+.proof-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:48px}
+.proof-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:32px;transition:all .3s}
+.proof-card:hover{background:rgba(255,255,255,.08);transform:translateY(-4px)}
+.proof-club{font-size:14px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:4px}
+.proof-headline{font-family:'DM Serif Display',serif;font-size:18px;color:#fff;margin-bottom:24px;line-height:1.35}
+.proof-metrics{display:flex;flex-direction:column;gap:16px;margin-bottom:24px}
+.proof-metric-val{font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:600;color:var(--gold-lt)}
+.proof-metric-label{font-size:12px;color:rgba(255,255,255,.45);margin-top:2px}
+.proof-link{font-size:13px;font-weight:600;color:var(--gold-lt);text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:gap .2s}
+.proof-link:hover{gap:10px}
 
-.free-callout {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: rgba(201,148,58,0.08); border: 1px solid rgba(201,148,58,0.2);
-  border-radius: 8px; padding: 10px 18px;
-  color: var(--gold-light); font-size: 14px; font-weight: 500;
-}
-.free-badge {
-  background: var(--gold); color: var(--white);
-  font-size: 11px; font-weight: 700;
-  padding: 2px 8px; border-radius: 4px;
-  text-transform: uppercase; letter-spacing: 0.08em;
-}
+/* ── CALCULATOR ── */
+.calc-section{padding:96px 0;background:var(--ivory)}
+.calc-inner{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;max-width:1180px;margin:0 auto;padding:0 40px}
+.calc-box{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:40px;box-shadow:var(--shadow)}
+.calc-row{margin-bottom:28px}
+.calc-label{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:10px;display:flex;justify-content:space-between}
+.calc-label span{font-family:'JetBrains Mono',monospace;color:var(--moss);font-weight:600}
+input[type=range]{width:100%;height:4px;border-radius:4px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,var(--green) 0%,var(--mist) 0%);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--green);border:3px solid #fff;box-shadow:0 2px 8px rgba(42,74,44,.3);cursor:pointer}
+.calc-result{background:linear-gradient(135deg,var(--forest),var(--ink));border-radius:16px;padding:28px;margin-top:4px}
+.calc-result-label{font-size:13px;color:rgba(255,255,255,.5);margin-bottom:8px}
+.calc-result-val{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:600;color:var(--gold-lt)}
+.calc-result-sub{font-size:13px;color:rgba(255,255,255,.4);margin-top:8px}
 
-.hero-stats {
-  display: flex; gap: 56px;
-  padding-top: 48px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-}
-.hero-stat .val {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 44px; font-weight: 600;
-  color: var(--gold-light); line-height: 1;
-}
-.hero-stat .lbl {
-  font-size: 13px; color: rgba(255,255,255,0.45);
-  margin-top: 6px; font-weight: 400;
-  max-width: 120px; line-height: 1.4;
-}
+/* ── TESTIMONIALS ── */
+.testimonials{padding:96px 0;background:var(--white)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testi-card{background:var(--ivory);border:1.5px solid var(--border);border-radius:18px;padding:32px;transition:all .3s}
+.testi-card:hover{border-color:rgba(42,74,44,.2);box-shadow:var(--shadow)}
+.testi-stars{color:var(--gold);margin-bottom:16px;font-size:14px;letter-spacing:2px}
+.testi-quote{font-size:15px;color:var(--ink);line-height:1.75;margin-bottom:24px;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:12px}
+.testi-avatar{width:42px;height:42px;border-radius:50%;background:var(--mist);display:flex;align-items:center;justify-content:center;font-family:'DM Serif Display',serif;font-size:16px;color:var(--green);flex-shrink:0}
+.testi-name{font-size:14px;font-weight:600;color:var(--ink)}
+.testi-role{font-size:12px;color:var(--text-muted)}
 
-.hero-right {
-  position: absolute; right: 0; top: 0; bottom: 0;
-  width: 45%;
-  display: flex; align-items: center; justify-content: center;
-  padding: 140px 56px 100px 0;
-  z-index: 2;
-}
-.dashboard-preview {
-  width: 100%; max-width: 500px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.04);
-}
-.dp-header {
-  background: rgba(255,255,255,0.05);
-  padding: 14px 20px;
-  border-bottom: 1px solid rgba(255,255,255,0.06);
-  display: flex; align-items: center; gap: 8px;
-}
-.dp-dot { width: 10px; height: 10px; border-radius: 50%; }
-.dp-dot.r { background: #FF6058; }
-.dp-dot.y { background: #FFBD2E; }
-.dp-dot.g { background: #28C840; }
-.dp-url {
-  margin-left: auto; margin-right: auto;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px; color: rgba(255,255,255,0.3);
-}
-.dp-body { padding: 20px; }
-.dp-label {
-  font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.3); margin-bottom: 14px;
-}
-.health-members { display: flex; flex-direction: column; gap: 8px; }
-.hm-row {
-  display: flex; align-items: center; gap: 12px;
-  background: rgba(255,255,255,0.03);
-  border-radius: 10px; padding: 12px 14px;
-  border: 1px solid rgba(255,255,255,0.06);
-}
-.hm-avatar {
-  width: 32px; height: 32px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px; font-weight: 700; color: var(--white); flex-shrink: 0;
-}
-.av-red { background: rgba(192,57,43,0.6); }
-.av-amber { background: rgba(217,132,0,0.6); }
-.av-green { background: rgba(42,74,44,0.8); }
-.hm-name { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); flex: 1; }
-.hm-detail { font-size: 11px; color: rgba(255,255,255,0.35); }
-.health-score {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 16px; font-weight: 500;
-}
-.score-red { color: #EF5350; }
-.score-amber { color: #FFA726; }
-.score-green { color: #66BB6A; }
-.hm-trend {
-  font-size: 10px; font-weight: 600;
-  padding: 2px 7px; border-radius: 4px;
-}
-.trend-dn { background: rgba(192,57,43,0.2); color: #EF9A9A; }
-.trend-up { background: rgba(42,74,44,0.4); color: #81C784; }
-.trend-flat { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.35); }
+/* ── WHO WE SERVE ── */
+.who-serve{padding:96px 0;background:var(--ivory)}
+.serve-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.serve-card{background:var(--white);border:1.5px solid var(--border);border-radius:16px;padding:28px;transition:all .3s;text-decoration:none;color:inherit;display:block}
+.serve-card:hover{border-color:var(--green);box-shadow:var(--shadow);transform:translateY(-3px)}
+.serve-icon{font-size:28px;margin-bottom:16px}
+.serve-title{font-family:'DM Serif Display',serif;font-size:19px;color:var(--ink);margin-bottom:8px}
+.serve-desc{font-size:13px;color:var(--text-muted);line-height:1.65}
 
-.dp-alert {
-  margin-top: 12px;
-  background: rgba(192,57,43,0.1);
-  border: 1px solid rgba(192,57,43,0.2);
-  border-radius: 10px; padding: 12px 14px;
-  display: flex; align-items: center; gap: 10px;
-}
-.dp-alert-icon { font-size: 16px; }
-.dp-alert-text { font-size: 12px; color: rgba(255,255,255,0.65); }
-.dp-alert-text strong { color: #EF9A9A; }
+/* ── BLOG ── */
+.blog-section{padding:96px 0}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.blog-card{background:var(--white);border:1.5px solid var(--border);border-radius:18px;overflow:hidden;transition:all .3s;text-decoration:none;color:inherit}
+.blog-card:hover{box-shadow:var(--shadow);transform:translateY(-4px)}
+.blog-img{height:180px;background:linear-gradient(135deg,var(--forest),var(--green));display:flex;align-items:center;justify-content:center;font-size:48px}
+.blog-img.blue-grad{background:linear-gradient(135deg,#1e3a5f,#2563eb)}
+.blog-img.gold-grad{background:linear-gradient(135deg,#3d2e00,#c9943a)}
+.blog-body{padding:24px}
+.blog-cat{font-size:11px;font-weight:600;color:var(--moss);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+.blog-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--ink);line-height:1.35;margin-bottom:10px}
+.blog-excerpt{font-size:13px;color:var(--text-muted);line-height:1.65}
+.blog-meta{display:flex;align-items:center;gap:8px;margin-top:16px;padding-top:16px;border-top:1px solid var(--border)}
+.blog-author{font-size:12px;color:var(--text-muted)}
 
-/* ─── SOCIAL PROOF BAR ─────────────────────────────────── */
-.proof-bar {
-  background: var(--cream);
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  padding: 20px 56px;
-  display: flex; align-items: center; justify-content: center;
-  gap: 48px; flex-wrap: wrap;
-}
-.proof-label {
-  font-size: 12px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--text-muted);
-}
-.proof-integrations { display: flex; gap: 32px; flex-wrap: wrap; align-items: center; }
-.proof-int {
-  font-size: 14px; font-weight: 600; color: var(--sage);
-  opacity: 0.7;
-}
-.proof-divider { width: 1px; height: 24px; background: var(--border); }
+/* ── FINAL CTA ── */
+.final-cta{padding:120px 48px;background:linear-gradient(155deg,var(--ink) 0%,var(--forest) 50%,#1a3020 100%);position:relative;overflow:hidden;text-align:center}
+.final-cta .hero-grid{opacity:.5}
+.final-cta-inner{position:relative;z-index:2;max-width:680px;margin:0 auto}
+.final-cta h2{font-family:'DM Serif Display',serif;font-size:clamp(36px,5vw,60px);color:#fff;line-height:1.1;margin-bottom:20px}
+.final-cta h2 em{font-style:italic;color:var(--gold-lt)}
+.final-cta p{font-size:17px;color:rgba(255,255,255,.55);margin-bottom:40px;line-height:1.7}
+.cta-actions{display:flex;align-items:center;gap:16px;justify-content:center;flex-wrap:wrap}
+.final-cta .contact-email{font-size:14px;color:rgba(255,255,255,.4);margin-top:20px}
+.final-cta .contact-email a{color:rgba(255,255,255,.65);text-decoration:none}
+.final-cta .contact-email a:hover{color:#fff}
 
-/* ─── SECTION COMMONS ──────────────────────────────────── */
-section { padding: 104px 56px; }
-.section-eyebrow {
-  font-size: 12px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.14em;
-  color: var(--gold);
-  margin-bottom: 14px;
-}
-.section-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 50px; font-weight: 600;
-  line-height: 1.1; color: var(--ink);
-  letter-spacing: -0.02em;
-  margin-bottom: 18px;
-}
-.section-sub {
-  font-size: 18px; color: var(--text-muted);
-  line-height: 1.65; max-width: 560px;
-}
+/* ── FOOTER ── */
+footer{background:var(--ink);padding:64px 48px 40px;color:rgba(255,255,255,.5)}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;max-width:1180px;margin:0 auto;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.08)}
+.footer-brand .logo-word{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;display:block;margin-bottom:14px}
+.footer-brand .logo-word span{color:var(--gold-lt)}
+.footer-brand p{font-size:13px;line-height:1.7;color:rgba(255,255,255,.4);max-width:260px}
+.footer-col h4{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:16px}
+.footer-col a{display:block;font-size:13px;color:rgba(255,255,255,.45);text-decoration:none;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;max-width:1180px;margin:32px auto 0;font-size:12px;color:rgba(255,255,255,.25);flex-wrap:wrap;gap:12px}
+.footer-bottom-links{display:flex;gap:20px}
+.footer-bottom-links a{font-size:12px;color:rgba(255,255,255,.25);text-decoration:none;transition:color .2s}
+.footer-bottom-links a:hover{color:rgba(255,255,255,.6)}
+.soc2-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 12px;font-size:11px;color:rgba(255,255,255,.35)}
 
-/* ─── PROBLEM SECTION ──────────────────────────────────── */
-.problem-section {
-  background: var(--ivory);
-}
-.problem-layout {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 80px; align-items: start;
-  max-width: 1180px; margin: 0 auto;
-}
-.problem-quote {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 28px; font-style: italic; font-weight: 500;
-  color: var(--ink); line-height: 1.4;
-  border-left: 3px solid var(--gold);
-  padding-left: 24px;
-  margin: 36px 0;
-}
-.problem-cards { display: flex; flex-direction: column; gap: 14px; margin-top: 36px; }
-.problem-card {
-  background: var(--white);
-  border-radius: 12px; padding: 20px 22px;
-  border-left: 3px solid var(--red-risk);
-  box-shadow: 0 1px 6px rgba(0,0,0,0.04);
-}
-.problem-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
-.problem-card h4 { font-size: 15px; font-weight: 600; }
-.problem-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{opacity:0;animation:fadeUp .7s forwards}
+.fade-up.delay-1{animation-delay:.1s}
+.fade-up.delay-2{animation-delay:.2s}
+.fade-up.delay-3{animation-delay:.3s}
+.fade-up.delay-4{animation-delay:.45s}
 
-.problem-right { padding-top: 8px; }
-.signal-box {
-  background: var(--white);
-  border-radius: 16px; padding: 32px;
-  border: 1px solid var(--border);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.05);
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;gap:48px}
+  .hero-visual{display:none}
+  .lenses-grid{grid-template-columns:repeat(2,1fr)}
+  .lens-card.featured{grid-column:span 1;flex-direction:column}
+  .spotlight-inner{grid-template-columns:1fr;gap:40px}
+  .spotlight-inner.reverse{direction:ltr}
+  .proof-grid,.testi-grid,.serve-grid,.blog-grid{grid-template-columns:repeat(2,1fr)}
+  .calc-inner{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+  nav{padding:0 24px}
+  .nav-links{display:none}
 }
-.signal-box h4 {
-  font-size: 12px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.12em;
-  color: var(--text-muted); margin-bottom: 22px;
-}
-.signal-row {
-  display: flex; align-items: center; gap: 16px;
-  margin-bottom: 18px; padding-bottom: 18px;
-  border-bottom: 1px solid var(--border);
-}
-.signal-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
-.signal-num {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 40px; font-weight: 600; color: var(--gold);
-  min-width: 90px; line-height: 1;
-}
-.signal-text { font-size: 14px; color: var(--ink); line-height: 1.5; }
-.signal-text strong { font-weight: 600; }
-
-/* ─── WEDGE / PRICING ──────────────────────────────────── */
-.pricing-section {
-  background: linear-gradient(180deg, var(--forest) 0%, #152817 100%);
-  padding: 104px 56px;
-}
-.pricing-header { text-align: center; margin-bottom: 72px; }
-.pricing-header .section-title { color: var(--white); }
-.pricing-header .section-sub { color: rgba(255,255,255,0.55); margin: 0 auto; }
-
-.wedge-framework {
-  display: flex; align-items: center; justify-content: center;
-  gap: 0; max-width: 1100px; margin: 0 auto 16px;
-}
-.wedge-step {
-  flex: 1; text-align: center;
-  padding: 8px 20px;
-  font-size: 13px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.1em;
-}
-.ws-see { color: rgba(255,255,255,0.5); }
-.ws-fix { color: var(--gold-light); }
-.ws-prove { color: var(--gold); }
-.wedge-arrow {
-  color: rgba(255,255,255,0.15); font-size: 20px;
-  margin-top: -2px;
-}
-
-.pricing-grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 24px; max-width: 1100px; margin: 0 auto;
-}
-
-.pricing-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 20px; padding: 36px;
-  transition: all 0.3s;
-  position: relative;
-}
-.pricing-card:hover { border-color: rgba(255,255,255,0.14); background: rgba(255,255,255,0.06); }
-.pricing-card.featured {
-  background: rgba(201,148,58,0.06);
-  border-color: rgba(201,148,58,0.3);
-  box-shadow: 0 0 0 1px rgba(201,148,58,0.15), 0 24px 60px rgba(0,0,0,0.3);
-}
-
-.featured-badge {
-  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--white); font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  padding: 4px 16px; border-radius: 20px;
-  white-space: nowrap;
-}
-
-.pc-tier {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.14em;
-  color: rgba(255,255,255,0.35); margin-bottom: 10px;
-}
-.pc-name {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 32px; font-weight: 600; color: var(--white);
-  margin-bottom: 6px;
-}
-.pc-tagline {
-  font-size: 14px; color: rgba(255,255,255,0.45);
-  line-height: 1.5; margin-bottom: 28px;
-  min-height: 42px;
-}
-
-.pc-price-row {
-  display: flex; align-items: baseline; gap: 6px;
-  margin-bottom: 6px;
-}
-.pc-price {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 52px; font-weight: 600; color: var(--white); line-height: 1;
-}
-.pc-price-unit { font-size: 16px; color: rgba(255,255,255,0.4); }
-.pc-price-note { font-size: 13px; color: rgba(255,255,255,0.35); margin-bottom: 28px; }
-
-.pc-cta {
-  display: block; text-align: center; text-decoration: none;
-  padding: 14px; border-radius: 10px;
-  font-size: 15px; font-weight: 600;
-  transition: all 0.25s;
-  margin-bottom: 32px;
-}
-.pc-cta-free {
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(255,255,255,0.14);
-  color: rgba(255,255,255,0.8);
-}
-.pc-cta-free:hover { background: rgba(255,255,255,0.1); color: var(--white); }
-.pc-cta-pro {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--white);
-  box-shadow: 0 4px 20px rgba(201,148,58,0.25);
-}
-.pc-cta-pro:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(201,148,58,0.35); }
-.pc-cta-club {
-  background: rgba(255,255,255,0.06);
-  border: 1.5px solid rgba(201,148,58,0.25);
-  color: var(--gold-light);
-}
-.pc-cta-club:hover { background: rgba(201,148,58,0.08); }
-
-.pc-divider {
-  height: 1px; background: rgba(255,255,255,0.07);
-  margin-bottom: 24px;
-}
-.pc-features-label {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.25); margin-bottom: 14px;
-}
-.pc-feature {
-  display: flex; align-items: flex-start; gap: 10px;
-  margin-bottom: 12px;
-  font-size: 14px; color: rgba(255,255,255,0.65);
-  line-height: 1.5;
-}
-.pc-check { color: var(--gold-light); flex-shrink: 0; margin-top: 1px; }
-.pc-check-muted { color: rgba(255,255,255,0.2); flex-shrink: 0; margin-top: 1px; }
-.pc-feature .bold { color: rgba(255,255,255,0.88); font-weight: 500; }
-
-.pc-soon {
-  display: inline-block;
-  font-size: 10px; font-weight: 600;
-  background: rgba(201,148,58,0.15); color: var(--gold-light);
-  padding: 1px 7px; border-radius: 4px;
-  text-transform: uppercase; letter-spacing: 0.06em;
-  margin-left: 6px; vertical-align: middle;
-}
-
-/* ─── LENSES SECTION ───────────────────────────────────── */
-.lenses-section {
-  background: var(--ivory);
-}
-.lenses-header { text-align: center; margin-bottom: 72px; }
-.lenses-header .section-sub { margin: 0 auto; }
-
-.lenses-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 24px; max-width: 1160px; margin: 0 auto;
-}
-.lens-card {
-  background: var(--white); border-radius: 16px;
-  padding: 32px; border: 1px solid var(--border);
-  transition: all 0.3s;
-  position: relative; overflow: hidden;
-}
-.lens-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 3px;
-}
-.lc-green::before { background: linear-gradient(90deg, var(--moss), var(--sage)); }
-.lc-gold::before { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
-.lc-red::before { background: linear-gradient(90deg, #C0392B, #E74C3C); }
-.lc-blue::before { background: linear-gradient(90deg, #2563EB, #60A5FA); }
-.lc-purple::before { background: linear-gradient(90deg, #7C3AED, #A78BFA); }
-.lc-teal::before { background: linear-gradient(90deg, #0D9488, #2DD4BF); }
-
-.lens-card:hover { box-shadow: 0 16px 48px rgba(0,0,0,0.08); transform: translateY(-4px); border-color: transparent; }
-.lens-icon { font-size: 28px; margin-bottom: 16px; }
-.lens-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
-.lens-card p { font-size: 14px; color: var(--text-muted); line-height: 1.7; }
-.lens-tag {
-  display: inline-block; margin-top: 14px;
-  font-size: 11px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.08em;
-  padding: 3px 10px; border-radius: 4px;
-}
-.tag-free { background: rgba(42,74,44,0.1); color: var(--moss); }
-.tag-pro { background: rgba(201,148,58,0.12); color: var(--gold); }
-.tag-club { background: rgba(124,58,237,0.1); color: #7C3AED; }
-
-/* ─── HOW IT WORKS ─────────────────────────────────────── */
-.how-section { background: var(--cream); }
-.how-header { max-width: 520px; margin-bottom: 64px; }
-.how-steps {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 32px; max-width: 1160px; margin: 0 auto;
-  position: relative;
-}
-.how-steps::before {
-  content: '';
-  position: absolute; top: 28px; left: calc(12.5% + 20px);
-  right: calc(12.5% + 20px); height: 1px;
-  background: linear-gradient(90deg, var(--gold), var(--gold-light), var(--gold));
-  opacity: 0.3;
-}
-.how-step { text-align: center; padding-top: 8px; }
-.step-circle {
-  width: 56px; height: 56px; border-radius: 50%;
-  background: var(--white);
-  border: 2px solid var(--border);
-  display: flex; align-items: center; justify-content: center;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 16px; font-weight: 600; color: var(--gold);
-  margin: 0 auto 20px;
-  position: relative; z-index: 2;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-}
-.how-step h4 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-.how-step p { font-size: 14px; color: var(--text-muted); line-height: 1.6; }
-
-/* ─── INTEGRATIONS ─────────────────────────────────────── */
-.integrations-section { background: var(--ivory); }
-.integrations-header { max-width: 520px; margin-bottom: 52px; }
-.integrations-grid {
-  display: flex; flex-wrap: wrap; gap: 12px;
-  max-width: 900px;
-}
-.int-chip {
-  background: var(--white); border: 1px solid var(--border);
-  border-radius: 50px; padding: 10px 22px;
-  font-size: 14px; font-weight: 600; color: var(--ink);
-  display: flex; align-items: center; gap: 8px;
-  transition: all 0.2s;
-}
-.int-chip:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 2px 12px rgba(201,148,58,0.12); }
-.int-note {
-  margin-top: 28px;
-  font-size: 13px; color: var(--text-muted);
-  display: flex; align-items: center; gap: 8px;
-}
-
-/* ─── GM QUOTES ────────────────────────────────────────── */
-.quotes-section {
-  background: var(--forest);
-  padding: 104px 56px;
-}
-.quotes-header { text-align: center; margin-bottom: 64px; }
-.quotes-header .section-title { color: var(--white); }
-.quotes-header .section-sub { color: rgba(255,255,255,0.5); margin: 0 auto; }
-
-.quotes-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 24px; max-width: 1160px; margin: 0 auto;
-}
-.quote-card {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 16px; padding: 32px;
-}
-.quote-mark {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 64px; color: var(--gold); opacity: 0.4;
-  line-height: 0.5; margin-bottom: 20px;
-}
-.quote-text {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 19px; font-style: italic;
-  color: rgba(255,255,255,0.8); line-height: 1.55;
-  margin-bottom: 24px;
-}
-.quote-author {
-  display: flex; align-items: center; gap: 12px;
-}
-.qa-avatar {
-  width: 38px; height: 38px; border-radius: 50%;
-  background: var(--green); border: 2px solid rgba(255,255,255,0.1);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; font-weight: 700; color: var(--white);
-}
-.qa-name { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.8); }
-.qa-role { font-size: 12px; color: rgba(255,255,255,0.35); }
-
-/* ─── CTA SECTION ──────────────────────────────────────── */
-.cta-section {
-  background: var(--ivory);
-  text-align: center; padding: 120px 56px;
-}
-.cta-inner { max-width: 640px; margin: 0 auto; }
-.cta-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 54px; font-weight: 600; line-height: 1.1;
-  color: var(--ink); letter-spacing: -0.02em;
-  margin-bottom: 20px;
-}
-.cta-title em { color: var(--gold); font-style: italic; }
-.cta-sub {
-  font-size: 18px; color: var(--text-muted);
-  line-height: 1.65; margin-bottom: 44px;
-}
-.cta-buttons { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 28px; }
-.btn-cta-primary {
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  color: var(--white); text-decoration: none;
-  padding: 17px 40px; border-radius: 10px;
-  font-size: 16px; font-weight: 600;
-  display: inline-flex; align-items: center; gap: 8px;
-  transition: all 0.25s;
-  box-shadow: 0 6px 28px rgba(201,148,58,0.28);
-}
-.btn-cta-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 36px rgba(201,148,58,0.38); }
-.btn-cta-free {
-  color: var(--moss); text-decoration: none;
-  padding: 17px 32px; border-radius: 10px;
-  font-size: 16px; font-weight: 600;
-  border: 2px solid var(--border);
-  transition: all 0.25s;
-}
-.btn-cta-free:hover { border-color: var(--moss); background: rgba(42,74,44,0.04); }
-
-.risk-stat {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: rgba(192,57,43,0.06);
-  border: 1px solid rgba(192,57,43,0.12);
-  border-radius: 8px; padding: 12px 20px;
-  font-size: 14px; color: var(--red-risk);
-}
-.rs-icon { font-size: 16px; }
-
-/* ─── FOOTER ───────────────────────────────────────────── */
-footer {
-  background: var(--ink);
-  padding: 48px 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  border-top: 1px solid rgba(255,255,255,0.06);
-}
-.footer-brand { display: flex; align-items: center; gap: 12px; }
-.footer-brand .logo-mark { width: 32px; height: 32px; font-size: 17px; }
-.footer-brand span {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 19px; font-weight: 600; color: rgba(255,255,255,0.7);
-}
-.footer-tagline { font-size: 13px; color: rgba(255,255,255,0.3); }
-.footer-links { display: flex; gap: 28px; }
-.footer-links a {
-  font-size: 13px; color: rgba(255,255,255,0.3);
-  text-decoration: none; transition: color 0.2s;
-}
-.footer-links a:hover { color: rgba(255,255,255,0.7); }
-
-/* ─── SCROLL ANIMATIONS ────────────────────────────────── */
-.fade-up {
-  opacity: 0; transform: translateY(28px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.fade-up.visible {
-  opacity: 1; transform: translateY(0);
-}
-.fade-up-delay-1 { transition-delay: 0.1s; }
-.fade-up-delay-2 { transition-delay: 0.2s; }
-.fade-up-delay-3 { transition-delay: 0.3s; }
-
-/* ─── RESPONSIVE ───────────────────────────────────────── */
-@media (max-width: 1100px) {
-  .hero-right { display: none; }
-  .hero { padding: 140px 40px 100px; }
-  .hero h1 { font-size: 56px; }
-  nav { padding: 0 32px; }
-  .nav-center { display: none; }
-}
-@media (max-width: 860px) {
-  section { padding: 72px 28px; }
-  .pricing-grid { grid-template-columns: 1fr; max-width: 420px; }
-  .lenses-grid { grid-template-columns: 1fr 1fr; }
-  .how-steps { grid-template-columns: 1fr 1fr; }
-  .quotes-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
-  .section-title { font-size: 38px; }
-  .problem-layout { grid-template-columns: 1fr; gap: 40px; }
+@media(max-width:640px){
+  .container{padding:0 20px}
+  .hero{padding:110px 24px 64px}
+  .lenses-grid,.proof-grid,.testi-grid,.serve-grid,.blog-grid{grid-template-columns:1fr}
+  .section{padding:64px 0}
+  .spotlight{padding:64px 0}
+  .spotlight-inner{padding:0 24px}
+  .final-cta{padding:80px 24px}
+  footer{padding:48px 24px 32px}
+  .footer-top{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- NAV -->
+<!-- ═══════════════════════════════ NAV ═══════════════════════════════ -->
 <nav>
-  <a class="nav-logo" href="#">
-    <div class="logo-mark">S</div>
-    <span class="logo-text">Swoop <span>Golf</span></span>
+  <a href="/" class="nav-logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C8.5 2 6 5 6 8.5c0 4.5 6 13.5 6 13.5s6-9 6-13.5C18 5 15.5 2 12 2zm0 9a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg>
+    </div>
+    <span class="logo-word">Swoop<span> Golf</span></span>
   </a>
-  <div class="nav-center">
-    <a href="#pricing">Pricing</a>
-    <a href="#features">Platform</a>
-    <a href="#how-it-works">How It Works</a>
-    <a href="#integrations">Integrations</a>
+
+  <div class="nav-links">
+    <a href="#overview">Overview</a>
+    <div class="nav-drop">
+      <span>Platform</span>
+      <div class="dropdown">
+        <div class="dd-label">Five Lenses</div>
+        <a href="#operations">⚡ Operations</a>
+        <a href="#revenue">💰 Revenue & F&B</a>
+        <a href="#retention">🤝 Member Retention</a>
+        <a href="#staffing">👥 Staffing & Service</a>
+        <a href="#pipeline">📈 Growth Pipeline</a>
+        <div class="dd-label" style="margin-top:4px">Tools</div>
+        <a href="#daily-briefing">📋 Daily Briefing</a>
+        <a href="#playbooks">🎯 Playbooks</a>
+        <a href="#waitlist">⏳ Demand Intelligence</a>
+      </div>
+    </div>
+    <div class="nav-drop">
+      <span>Who We Serve</span>
+      <div class="dropdown">
+        <a href="#private">🏛️ Private Clubs</a>
+        <a href="#semi-private">⛳ Semi-Private Clubs</a>
+        <a href="#resort">🌴 Resort Properties</a>
+        <a href="#multi">🗺️ Multi-Course Operators</a>
+        <a href="#daily-fee">🎫 Daily Fee Courses</a>
+      </div>
+    </div>
+    <a href="#resources">Resources</a>
+    <a href="#about">About</a>
   </div>
+
   <div class="nav-right">
-    <a href="#" class="nav-link-plain">Sign In</a>
-    <a href="#pricing" class="nav-cta">Get Started Free →</a>
+    <a href="#" class="nav-signin">Login</a>
+    <a href="#demo" class="nav-cta">Book a Demo</a>
   </div>
 </nav>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-bg-grid"></div>
-  <div class="hero-bg-glow"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">
-      <div class="eyebrow-dot"></div>
-      Club Intelligence Platform · Free to Start
-    </div>
-    <h1>
-      Stop managing<br>
-      <span class="accent">by anecdote.</span>
-    </h1>
-    <p class="hero-sub">
-      Swoop gives GMs a single view across golf, dining, and member activity —
-      so you can spot who's quietly disengaging <strong>weeks before they resign.</strong>
-    </p>
-    <div class="hero-ctas">
-      <a href="#pricing" class="btn-hero-primary">Get Member Health Scores Free →</a>
-      <a href="#pricing" class="btn-hero-secondary">See All Plans</a>
-    </div>
-    <div class="free-callout">
-      <span class="free-badge">Free Forever</span>
-      Member Health Scores for your entire club — no credit card required
-    </div>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="val">90%</div>
-        <div class="lbl">of GMs call daily health scores "extremely valuable"</div>
+<!-- ═══════════════════════════════ HERO ══════════════════════════════ -->
+<section class="hero" id="overview">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge fade-up">
+        <div class="hero-badge-dot"></div>
+        <span>Now serving 200+ private clubs nationwide</span>
       </div>
-      <div class="hero-stat">
-        <div class="val">$140K</div>
-        <div class="lbl">average in preventable resignations per year</div>
+      <h1 class="fade-up delay-1">Club Intelligence for <em>General Managers</em></h1>
+      <p class="hero-sub fade-up delay-2">Swoop gives you a complete decision-support platform across five strategic lenses — so you don't just fill tee times, you fill them with the <em style="color:var(--gold-lt);font-style:italic">right members.</em></p>
+      <div class="hero-actions fade-up delay-3">
+        <a href="#demo" class="btn-primary">Book a Demo →</a>
+        <a href="#overview" class="btn-outline-white">Take a Quick Tour</a>
       </div>
-      <div class="hero-stat">
-        <div class="val">6–8</div>
-        <div class="lbl">weeks of warning before a member resigns</div>
+      <div class="hero-stats fade-up delay-4">
+        <div>
+          <div class="hero-stat-val">$2.4M</div>
+          <div class="hero-stat-label">Revenue recovered avg per club/year</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">93%</div>
+          <div class="hero-stat-label">GM retention after year 1</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">200+</div>
+          <div class="hero-stat-label">Private clubs trust Swoop</div>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="hero-right">
-    <div class="dashboard-preview">
-      <div class="dp-header">
-        <div class="dp-dot r"></div>
-        <div class="dp-dot y"></div>
-        <div class="dp-dot g"></div>
-        <div class="dp-url">app.swoopgolf.com · Member Health</div>
+
+    <div class="hero-visual fade-up delay-2">
+      <div class="float-badge top-left">
+        🚨 <strong>Alert:</strong> <span class="badge-num">3</span> at-risk members flagged
       </div>
-      <div class="dp-body">
-        <div class="dp-label">Today's At-Risk Members</div>
-        <div class="health-members">
-          <div class="hm-row">
-            <div class="hm-avatar av-red">JK</div>
-            <div style="flex:1">
-              <div class="hm-name">James Kirkland</div>
-              <div class="hm-detail">No golf in 41 days · Dining ↓64%</div>
-            </div>
-            <div class="health-score score-red">38</div>
-            <div class="hm-trend trend-dn">↓12</div>
+      <div class="dashboard-card">
+        <div class="dash-header">
+          <div class="dash-title">GM Daily Briefing</div>
+          <div class="dash-date">FRI · MAR 06 · 7:02 AM</div>
+        </div>
+        <div class="dash-kpis">
+          <div class="kpi-tile green-bg">
+            <div class="kpi-val">87%</div>
+            <div class="kpi-label">Tee sheet utilization</div>
+            <div class="kpi-delta">↑ +4% vs last Fri</div>
           </div>
-          <div class="hm-row">
-            <div class="hm-avatar av-amber">SW</div>
-            <div style="flex:1">
-              <div class="hm-name">Sandra Whitmore</div>
-              <div class="hm-detail">3rd event miss this month</div>
-            </div>
-            <div class="health-score score-amber">54</div>
-            <div class="hm-trend trend-dn">↓7</div>
+          <div class="kpi-tile gold-bg">
+            <div class="kpi-val">$18.4K</div>
+            <div class="kpi-label">F&B revenue MTD</div>
+            <div class="kpi-delta warn">⚡ 6% below target</div>
           </div>
-          <div class="hm-row">
-            <div class="hm-avatar av-green">RP</div>
-            <div style="flex:1">
-              <div class="hm-name">Robert Park</div>
-              <div class="hm-detail">Engagement recovering</div>
-            </div>
-            <div class="health-score score-green">82</div>
-            <div class="hm-trend trend-up">↑9</div>
+          <div class="kpi-tile">
+            <div class="kpi-val">142</div>
+            <div class="kpi-label">Active members</div>
+            <div class="kpi-delta">↑ 3 new this week</div>
+          </div>
+          <div class="kpi-tile">
+            <div class="kpi-val">4.8★</div>
+            <div class="kpi-label">Service rating</div>
+            <div class="kpi-delta">↑ 0.2 from last week</div>
           </div>
         </div>
-        <div class="dp-alert">
-          <div class="dp-alert-icon">⚠️</div>
-          <div class="dp-alert-text"><strong>James Kirkland has a tee time at 9:40am.</strong> Consider a check-in — last satisfaction score was 4.1/10.</div>
+        <div class="dash-alert">
+          <div class="alert-dot"></div>
+          <div class="alert-text"><strong>Slow Saturday detected.</strong> 14 open slots on Sat 8–10 AM. Waitlist has 9 qualified members. Trigger Slow Saturday Recovery playbook?</div>
         </div>
+        <div class="dash-lens-row">
+          <div class="lens-pill active">Operations</div>
+          <div class="lens-pill">Revenue</div>
+          <div class="lens-pill">Retention</div>
+          <div class="lens-pill">Staffing</div>
+          <div class="lens-pill">Pipeline</div>
+        </div>
+      </div>
+      <div class="float-badge bottom-right">
+        ✅ Playbook triggered — <span class="badge-num">9</span> members notified
       </div>
     </div>
   </div>
 </section>
 
-<!-- PROOF BAR -->
-<div class="proof-bar">
-  <span class="proof-label">Connects to</span>
-  <div class="proof-integrations">
-    <span class="proof-int">ForeTees</span>
-    <div class="proof-divider"></div>
-    <span class="proof-int">Northstar</span>
-    <div class="proof-divider"></div>
-    <span class="proof-int">Jonas</span>
-    <div class="proof-divider"></div>
-    <span class="proof-int">Club Prophet</span>
-    <div class="proof-divider"></div>
-    <span class="proof-int">Lightspeed</span>
-    <div class="proof-divider"></div>
-    <span class="proof-int">Clubessential</span>
-    <div class="proof-divider"></div>
-    <span class="proof-int">Chronogolf</span>
+<!-- ═══════════════════════════════ TRUSTED ═══════════════════════════ -->
+<div class="trusted">
+  <div class="trusted-inner">
+    <span class="trusted-label">Trusted by leading private clubs</span>
+    <div class="trusted-logos">
+      <span class="club-logo">Oakmont Hills CC</span>
+      <span class="club-logo">Pebble Ridge GC</span>
+      <span class="club-logo">Meadowbrook CC</span>
+      <span class="club-logo">Stone Creek GC</span>
+      <span class="club-logo">Harborview Club</span>
+      <span class="club-logo">Ridgecrest CC</span>
+    </div>
   </div>
 </div>
 
-<!-- PROBLEM SECTION -->
-<section class="problem-section" id="problem">
-  <div class="problem-layout">
+<!-- ══════════════════════════════ LENSES ════════════════════════════ -->
+<section class="section" id="platform">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">The Swoop Platform</span>
+      <h2 class="section-title">The Decision Engine for Private Club GMs</h2>
+      <p class="section-sub">Five strategic lenses — one unified view. Swoop synthesizes your entire club's data into the intelligence GMs actually need, every morning before the first tee time.</p>
+    </div>
+    <div class="lenses-grid">
+      <!-- Featured card: Daily Briefing -->
+      <div class="lens-card featured">
+        <div>
+          <span class="lens-num">LENS 00</span>
+          <div class="lens-icon gold"><span>📋</span></div>
+          <div class="lens-title">Daily Briefing</div>
+          <p class="lens-desc">Your club's morning intelligence report. Every KPI, alert, and action item synthesized overnight — so you walk in knowing exactly what needs your attention.</p>
+          <a href="#daily-briefing" class="lens-link">See How It Works →</a>
+        </div>
+        <div class="lens-feat-visual">
+          <div class="mini-chart">
+            <div style="font-size:11px;color:rgba(255,255,255,.4);margin-bottom:12px;">Weekly utilization</div>
+            <div class="chart-bar-row"><span class="chart-bar-label">Mon</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:72%"></div></div></div>
+            <div class="chart-bar-row"><span class="chart-bar-label">Tue</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:58%"></div></div></div>
+            <div class="chart-bar-row"><span class="chart-bar-label">Wed</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:81%"></div></div></div>
+            <div class="chart-bar-row"><span class="chart-bar-label">Thu</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:65%"></div></div></div>
+            <div class="chart-bar-row"><span class="chart-bar-label">Fri</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:94%"></div></div></div>
+            <div class="chart-bar-row"><span class="chart-bar-label">Sat</span><div class="chart-bar-track"><div class="chart-bar-fill" style="width:43%"></div></div><span style="font-size:10px;color:#E8B05A;margin-left:6px">⚠️</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Operations -->
+      <div class="lens-card" id="operations">
+        <span class="lens-num">LENS 01</span>
+        <div class="lens-icon green"><span>⚡</span></div>
+        <div class="lens-title">Operations</div>
+        <p class="lens-desc">Real-time tee sheet optimization, pace-of-play tracking, and demand intelligence. Spot slow days before they happen and fill them with the right players.</p>
+        <a href="#operations-detail" class="lens-link">Explore Lens →</a>
+      </div>
+      <!-- Revenue & F&B -->
+      <div class="lens-card" id="revenue">
+        <span class="lens-num">LENS 02</span>
+        <div class="lens-icon gold"><span>💰</span></div>
+        <div class="lens-title">Revenue & F&B</div>
+        <p class="lens-desc">Track F&B performance per member, identify underperforming outlets, and surface revenue opportunities your spreadsheets can't see.</p>
+        <a href="#revenue-detail" class="lens-link">Explore Lens →</a>
+      </div>
+      <!-- Retention -->
+      <div class="lens-card" id="retention">
+        <span class="lens-num">LENS 03</span>
+        <div class="lens-icon blue"><span>🤝</span></div>
+        <div class="lens-title">Member Retention</div>
+        <p class="lens-desc">Engagement decay detection, sentiment tracking, and churn prediction — so you intervene before a member goes quiet, not after they resign.</p>
+        <a href="#retention-detail" class="lens-link">Explore Lens →</a>
+      </div>
+      <!-- Staffing -->
+      <div class="lens-card" id="staffing">
+        <span class="lens-num">LENS 04</span>
+        <div class="lens-icon red"><span>👥</span></div>
+        <div class="lens-title">Staffing & Service</div>
+        <p class="lens-desc">Optimal staffing recommendations matched to demand forecasts. Prevent service gaps and eliminate overstaffed shifts simultaneously.</p>
+        <a href="#staffing-detail" class="lens-link">Explore Lens →</a>
+      </div>
+      <!-- Pipeline -->
+      <div class="lens-card" id="pipeline">
+        <span class="lens-num">LENS 05</span>
+        <div class="lens-icon purple"><span>📈</span></div>
+        <div class="lens-title">Growth Pipeline</div>
+        <p class="lens-desc">Prospect scoring, referral tracking, and member acquisition funnel intelligence. Know which candidates are most likely to convert and why.</p>
+        <a href="#pipeline-detail" class="lens-link">Explore Lens →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ SPOTLIGHT 1 – DAILY BRIEFING ══════════════ -->
+<section class="spotlight" id="daily-briefing">
+  <div class="spotlight-inner">
+    <div class="spotlight-text">
+      <span class="label">Daily Briefing</span>
+      <h2>Your Club's Morning Intelligence Report</h2>
+      <p>Before you walk in the door, Swoop has already analyzed your tee sheet, F&B numbers, member activity, and staffing coverage — and surfaced the three things that need your attention today.</p>
+      <ul class="feature-list">
+        <li>Overnight data synthesis from all five lenses</li>
+        <li>Priority alerts ranked by revenue and retention impact</li>
+        <li>One-tap playbook triggers directly from the briefing</li>
+        <li>Delivered to your phone at 6:30 AM, every morning</li>
+      </ul>
+      <a href="#demo" class="btn-primary">See It in Action →</a>
+    </div>
+    <div class="spotlight-visual">
+      <div style="font-family:'DM Serif Display',serif;font-size:16px;color:var(--ink);margin-bottom:20px;">Today's Priorities</div>
+      <div class="metric-row">
+        <span class="metric-name">Tee sheet utilization (Sat)</span>
+        <div style="display:flex;align-items:center;gap:12px"><span class="metric-val">61%</span><span class="metric-delta warn">⚠ Low</span></div>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">F&B revenue vs target</span>
+        <div style="display:flex;align-items:center;gap:12px"><span class="metric-val">$18.4K</span><span class="metric-delta down">-6%</span></div>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Members flagged at-risk</span>
+        <div style="display:flex;align-items:center;gap:12px"><span class="metric-val">3</span><span class="metric-delta down">Action needed</span></div>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">Staffing gap — Saturday PM</span>
+        <div style="display:flex;align-items:center;gap:12px"><span class="metric-val">2 FTE short</span><span class="metric-delta down">Critical</span></div>
+      </div>
+      <div class="metric-row">
+        <span class="metric-name">New prospects in pipeline</span>
+        <div style="display:flex;align-items:center;gap:12px"><span class="metric-val">7</span><span class="metric-delta up">+3 this week</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ SPOTLIGHT 2 – DEMAND INTEL ══════════════ -->
+<section class="spotlight" id="waitlist" style="background:var(--white)">
+  <div class="spotlight-inner reverse">
+    <div class="spotlight-text">
+      <span class="label">Demand Intelligence</span>
+      <h2>Fill Open Slots with the <em style="font-style:italic;color:var(--green)">Right Members</em></h2>
+      <p>When a tee time cancels, Swoop doesn't just fill the slot — it finds the member who will play, spend, and engage. Prioritized by membership score, F&B propensity, and engagement health.</p>
+      <ul class="feature-list">
+        <li>AI-ranked waitlist based on member value score</li>
+        <li>Instant push notifications when preferred times open</li>
+        <li>Cancellation prediction 48+ hours in advance</li>
+        <li>100% of revenue stays with your club</li>
+      </ul>
+      <a href="#demo" class="btn-primary">See How It Works →</a>
+    </div>
+    <div class="spotlight-visual" style="padding:0;overflow:hidden">
+      <div class="waitlist-vis">
+        <div class="wl-header">
+          <div class="wl-header-title">Waitlist — Sat 8:00 AM</div>
+          <div class="wl-header-badge">9 qualified members</div>
+        </div>
+        <div class="wl-row">
+          <div class="wl-rank">#1</div>
+          <div class="wl-avatar">JH</div>
+          <div>
+            <div class="wl-name">James Harrington</div>
+            <div class="wl-score">Score: 94 · F&B: $4,200/yr · 38 rounds</div>
+          </div>
+          <div class="wl-priority high"></div>
+        </div>
+        <div class="wl-row">
+          <div class="wl-rank">#2</div>
+          <div class="wl-avatar">SM</div>
+          <div>
+            <div class="wl-name">Sarah Mitchell</div>
+            <div class="wl-score">Score: 88 · F&B: $3,100/yr · 29 rounds</div>
+          </div>
+          <div class="wl-priority high"></div>
+        </div>
+        <div class="wl-row">
+          <div class="wl-rank">#3</div>
+          <div class="wl-avatar">RD</div>
+          <div>
+            <div class="wl-name">Robert Dempsey</div>
+            <div class="wl-score">Score: 76 · F&B: $2,800/yr · 22 rounds</div>
+          </div>
+          <div class="wl-priority med"></div>
+        </div>
+        <div class="wl-row">
+          <div class="wl-rank">#4</div>
+          <div class="wl-avatar">KL</div>
+          <div>
+            <div class="wl-name">Katherine Lin</div>
+            <div class="wl-score">Score: 71 · F&B: $2,200/yr · 18 rounds</div>
+          </div>
+          <div class="wl-priority low"></div>
+        </div>
+        <div style="padding:16px 20px;text-align:center">
+          <a href="#demo" style="font-size:13px;font-weight:600;color:var(--moss);text-decoration:none">Trigger notifications for top 3 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════════════════════════ SPOTLIGHT 3 – PLAYBOOKS ══════════════════ -->
+<section class="spotlight" id="playbooks">
+  <div class="spotlight-inner">
+    <div class="spotlight-text">
+      <span class="label">Playbooks</span>
+      <h2>See It. Fix It. Before It Costs You.</h2>
+      <p>Swoop's four GM Playbooks are pre-built response protocols triggered automatically when the data tells you something is wrong. From slow Saturdays to service failures — the fix is one tap away.</p>
+      <ul class="feature-list">
+        <li>Slow Saturday Recovery — fill gaps with ranked waitlist</li>
+        <li>Service Save Protocol — intercept a bad experience in real time</li>
+        <li>Engagement Decay Intervention — re-activate quiet members</li>
+        <li>Staffing Gap Prevention — automated coverage alerts</li>
+      </ul>
+      <a href="#demo" class="btn-primary">Explore All Playbooks →</a>
+    </div>
+    <div class="spotlight-visual" style="padding:24px;background:var(--ivory)">
+      <div class="playbook-card">
+        <h4>🐌 Slow Saturday Recovery</h4>
+        <p>14 open slots detected on Sat 8–10 AM. Automatically ranks and notifies 9 waitlisted members. Average fill rate: 92%.</p>
+        <span class="pb-tag">Operations Lens</span>
+      </div>
+      <div class="playbook-card" style="background:linear-gradient(135deg,#1a1a2e,#2563eb22);border:1px solid rgba(37,99,235,.3)">
+        <h4>🛟 Service Save Protocol</h4>
+        <p>Member Thomas Chen scored a 2-star experience. GM alerted within 4 minutes with context, history, and a suggested recovery action.</p>
+        <span class="pb-tag" style="background:rgba(37,99,235,.2);color:#93c5fd">Retention Lens</span>
+      </div>
+      <div class="playbook-card" style="background:linear-gradient(135deg,#1f0a00,rgba(201,148,58,.15));border:1px solid rgba(201,148,58,.2)">
+        <h4>📉 Engagement Decay Intervention</h4>
+        <p>3 members haven't played in 45+ days. Personalized re-engagement messages drafted and ready to send with one tap.</p>
+        <span class="pb-tag">Retention Lens</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ PROOF / RESULTS ═══════════════════════ -->
+<section class="proof" id="results">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">Proven Results</span>
+      <h2 class="section-title">Real Impact at Real Clubs</h2>
+      <p class="section-sub" style="color:rgba(255,255,255,.5)">From recovering lost revenue to preventing member churn — here's what Swoop delivers for GMs across the country.</p>
+    </div>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <div class="proof-club">Oakmont Hills Country Club</div>
+        <div class="proof-headline">How Oakmont Hills recovered $325K in annual revenue and reduced member churn by 18%</div>
+        <div class="proof-metrics">
+          <div>
+            <div class="proof-metric-val">$325,000+</div>
+            <div class="proof-metric-label">Annual revenue recovered across all five lenses</div>
+          </div>
+          <div>
+            <div class="proof-metric-val">18%</div>
+            <div class="proof-metric-label">Reduction in member churn year-over-year</div>
+          </div>
+        </div>
+        <a href="#" class="proof-link">Read Full Case Study →</a>
+      </div>
+      <div class="proof-card">
+        <div class="proof-club">Pebble Ridge Golf Club</div>
+        <div class="proof-headline">Pebble Ridge eliminates slow Saturdays and adds $180K in F&B revenue in 8 months</div>
+        <div class="proof-metrics">
+          <div>
+            <div class="proof-metric-val">$180,000</div>
+            <div class="proof-metric-label">Additional F&B revenue identified and captured</div>
+          </div>
+          <div>
+            <div class="proof-metric-val">94%</div>
+            <div class="proof-metric-label">Tee sheet utilization on historically slow days</div>
+          </div>
+        </div>
+        <a href="#" class="proof-link">Read Full Case Study →</a>
+      </div>
+      <div class="proof-card">
+        <div class="proof-club">Meadowbrook Country Club</div>
+        <div class="proof-headline">Meadowbrook converts 11 high-value prospects to members using Swoop Pipeline scoring</div>
+        <div class="proof-metrics">
+          <div>
+            <div class="proof-metric-val">11</div>
+            <div class="proof-metric-label">New members converted from scored pipeline</div>
+          </div>
+          <div>
+            <div class="proof-metric-val">$220K</div>
+            <div class="proof-metric-label">Total economic impact in year one</div>
+          </div>
+        </div>
+        <a href="#" class="proof-link">Read Full Case Study →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ CALCULATOR ════════════════════════════ -->
+<section class="calc-section" id="calculator">
+  <div class="calc-inner">
     <div>
-      <div class="section-eyebrow">The Blind Spot</div>
-      <h2 class="section-title">You feel it. You can't see it.</h2>
-      <div class="problem-quote">
-        "I can see rounds played, but I can't see that John Smith is quietly disengaging everywhere."
-      </div>
-      <div class="problem-cards">
-        <div class="problem-card fade-up">
-          <div class="problem-card-header">
-            <h4>⛳ Tee sheet is full — but your best members aren't on it</h4>
+      <span class="label">ROI Calculator</span>
+      <h2 class="section-title">What Could Swoop Recover for Your Club?</h2>
+      <p class="section-sub">Every unfilled tee time, every disengaged member, every missed F&B opportunity — Swoop finds them all. See your potential impact below.</p>
+      <div style="margin-top:40px">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="padding:20px;background:var(--white);border:1.5px solid var(--border);border-radius:16px;display:flex;align-items:center;gap:16px">
+            <div style="width:44px;height:44px;border-radius:10px;background:rgba(42,74,44,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">⚡</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink)">Operations Recovery</div>
+              <div style="font-size:12px;color:var(--text-muted)">Avg. $85K/yr from waitlist + cancellation fill</div>
+            </div>
           </div>
-          <p>High-dues members reduce frequency months before they resign. It's invisible until it's too late.</p>
-        </div>
-        <div class="problem-card fade-up fade-up-delay-1">
-          <div class="problem-card-header">
-            <h4>🍽️ F&B margins are negative, but you don't know which service failures caused it</h4>
+          <div style="padding:20px;background:var(--white);border:1.5px solid var(--border);border-radius:16px;display:flex;align-items:center;gap:16px">
+            <div style="width:44px;height:44px;border-radius:10px;background:rgba(201,148,58,.12);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">💰</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink)">F&B Revenue Uplift</div>
+              <div style="font-size:12px;color:var(--text-muted)">Avg. $62K/yr from spend optimization</div>
+            </div>
           </div>
-          <p>When pace slows on holes 7-9 and the kitchen backs up, should you delay seating? You have no way to know.</p>
-        </div>
-        <div class="problem-card fade-up fade-up-delay-2">
-          <div class="problem-card-header">
-            <h4>📋 You're managing by anecdote, not intelligence</h4>
+          <div style="padding:20px;background:var(--white);border:1.5px solid var(--border);border-radius:16px;display:flex;align-items:center;gap:16px">
+            <div style="width:44px;height:44px;border-radius:10px;background:rgba(37,99,235,.1);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">🤝</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--ink)">Retention Value Saved</div>
+              <div style="font-size:12px;color:var(--text-muted)">Avg. $140K/yr preventing churn</div>
+            </div>
           </div>
-          <p>By the time a complaint reaches you, the damage is done. The data existed — it just wasn't connected.</p>
         </div>
       </div>
     </div>
-    <div class="problem-right">
-      <div class="signal-box fade-up">
-        <h4>Survey signals from 16+ private clubs</h4>
-        <div class="signal-row">
-          <div class="signal-num">90%</div>
-          <div class="signal-text">of GMs find a <strong>daily Member Health Score</strong> valuable or extremely valuable</div>
+    <div class="calc-box">
+      <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);margin-bottom:28px">Estimate Your Annual Impact</div>
+      <div class="calc-row">
+        <div class="calc-label">Active Members <span id="membersVal">450</span></div>
+        <input type="range" min="100" max="1200" value="450" id="membersSlider" oninput="calcUpdate()">
+      </div>
+      <div class="calc-row">
+        <div class="calc-label">Avg Annual Dues <span id="duesVal">$8,500</span></div>
+        <input type="range" min="2000" max="30000" step="500" value="8500" id="duesSlider" oninput="calcUpdate()">
+      </div>
+      <div class="calc-row">
+        <div class="calc-label">Tee Times Per Day <span id="teesVal">48</span></div>
+        <input type="range" min="12" max="120" value="48" id="teesSlider" oninput="calcUpdate()">
+      </div>
+      <div class="calc-row">
+        <div class="calc-label">Days in Operation <span id="daysVal">280</span></div>
+        <input type="range" min="120" max="365" value="280" id="daysSlider" oninput="calcUpdate()">
+      </div>
+      <div class="calc-result">
+        <div class="calc-result-label">Estimated annual value with Swoop</div>
+        <div class="calc-result-val" id="calcResult">$287,000</div>
+        <div class="calc-result-sub">Across all five lenses — operations, F&B, retention, staffing, and pipeline</div>
+      </div>
+      <a href="#demo" class="btn-primary" style="margin-top:20px;width:100%;justify-content:center">See How Swoop Can Help →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TESTIMONIALS ══════════════════════════ -->
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">What GMs Are Saying</span>
+      <h2 class="section-title">Leading GMs Trust Swoop</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Before Swoop, I was making decisions based on gut feel and last month's spreadsheet. Now I walk in every morning knowing exactly what needs my attention — and the playbooks actually fix it."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">JG</div>
+          <div>
+            <div class="testi-name">Jim Gallagher</div>
+            <div class="testi-role">General Manager · Oakmont Hills CC</div>
+          </div>
         </div>
-        <div class="signal-row">
-          <div class="signal-num">11/16</div>
-          <div class="signal-text">clubs selected <strong>service consistency</strong> as a top-3 outcome for 2026</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The retention lens alone paid for our subscription four times over in year one. We caught three high-value members showing disengagement signals and recovered all three. That's $90K saved."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">AM</div>
+          <div>
+            <div class="testi-name">Amanda Morris</div>
+            <div class="testi-role">GM & COO · Pebble Ridge Golf Club</div>
+          </div>
         </div>
-        <div class="signal-row">
-          <div class="signal-num">8/10</div>
-          <div class="signal-text">clubs are running <strong>F&B at negative or subsidized margins</strong></div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Noteefy fills tee times. Swoop fills them with the right members. That distinction matters enormously when you're running a private club. The member quality of who gets called off our waitlist is night and day."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">DW</div>
+          <div>
+            <div class="testi-name">Derek Whitfield</div>
+            <div class="testi-role">Director of Golf · Meadowbrook CC</div>
+          </div>
         </div>
-        <div class="signal-row">
-          <div class="signal-num">1/10</div>
-          <div class="signal-text">clubs are ready to <strong>switch systems</strong> — the solution must layer on, not rip-and-replace</div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"The staffing lens has transformed how we schedule. We used to overshoot on busy days and understaff on slow ones. Swoop's demand forecasting made that a thing of the past."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">RK</div>
+          <div>
+            <div class="testi-name">Rachel Kim</div>
+            <div class="testi-role">GM · Stone Creek Golf Club</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"We onboarded in less than a day. The implementation team handled everything — and within a week we'd already triggered our first playbook. This is genuinely the most impactful software we've added in five years."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">TC</div>
+          <div>
+            <div class="testi-name">Thomas Caldwell</div>
+            <div class="testi-role">General Manager · Harborview Club</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Our board asked what changed after we hit our revenue targets two quarters in a row. I showed them the Swoop dashboard. That was the end of the conversation — they approved the expansion budget immediately."</p>
+        <div class="testi-author">
+          <div class="testi-avatar">BP</div>
+          <div>
+            <div class="testi-name">Brian Paxton</div>
+            <div class="testi-role">GM · Ridgecrest Country Club</div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRICING / WEDGE SECTION -->
-<section class="pricing-section" id="pricing">
-  <div class="pricing-header">
-    <div class="section-eyebrow" style="color:var(--gold-light)">See It → Fix It → Prove It</div>
-    <h2 class="section-title">Start free. Grow when you're ready.</h2>
-    <p class="section-sub">The Member Health Score is free forever. Add operational intelligence, AI agents, and ROI proof as your club needs them.</p>
-  </div>
-
-  <div class="wedge-framework">
-    <div class="wedge-step ws-see">👁 See It</div>
-    <div class="wedge-arrow">→</div>
-    <div class="wedge-step ws-fix">⚙️ Fix It</div>
-    <div class="wedge-arrow">→</div>
-    <div class="wedge-step ws-prove">📈 Prove It</div>
-  </div>
-
-  <div class="pricing-grid">
-
-    <!-- FREE -->
-    <div class="pricing-card fade-up">
-      <div class="pc-tier">Starter</div>
-      <div class="pc-name">Health Score</div>
-      <div class="pc-tagline">Daily member health visibility. The intelligence every club should have — at zero cost.</div>
-      <div class="pc-price-row">
-        <div class="pc-price">$0</div>
-        <div class="pc-price-unit">/ month</div>
-      </div>
-      <div class="pc-price-note">Free forever · No credit card required</div>
-      <a href="#" class="pc-cta pc-cta-free">Get Started Free →</a>
-      <div class="pc-divider"></div>
-      <div class="pc-features-label">What's included</div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Daily Member Health Scores</span> — every member, every day</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">At-Risk Flagging</span> — who needs attention today</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Decay Signal Detection</span> — golf, dining, and events combined</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span>7-day trend history per member</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span>Morning email digest</span></div>
-      <div class="pc-feature"><span class="pc-check-muted">○</span><span style="color:rgba(255,255,255,0.25)">Real-time operational cockpit</span></div>
-      <div class="pc-feature"><span class="pc-check-muted">○</span><span style="color:rgba(255,255,255,0.25)">Automated playbooks</span></div>
-      <div class="pc-feature"><span class="pc-check-muted">○</span><span style="color:rgba(255,255,255,0.25)">AI recovery agents</span></div>
+<!-- ═══════════════════════════ WHO WE SERVE ══════════════════════════ -->
+<section class="who-serve" id="who-we-serve">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">Who We Serve</span>
+      <h2 class="section-title">Built for Every Type of Club</h2>
+      <p class="section-sub">From intimate private clubs to large resort properties, Swoop's Five Lenses adapt to your club's size, structure, and strategy.</p>
     </div>
-
-    <!-- PRO -->
-    <div class="pricing-card featured fade-up fade-up-delay-1">
-      <div class="featured-badge">Most Popular · Best Value</div>
-      <div class="pc-tier">Professional</div>
-      <div class="pc-name">Cockpit</div>
-      <div class="pc-tagline">The real-time GM command center. See problems forming — and act before members feel them.</div>
-      <div class="pc-price-row">
-        <div class="pc-price" style="color:var(--gold-light)">$699</div>
-        <div class="pc-price-unit">/ month</div>
-      </div>
-      <div class="pc-price-note">Per club · Billed annually</div>
-      <a href="#" class="pc-cta pc-cta-pro">Book a Demo →</a>
-      <div class="pc-divider"></div>
-      <div class="pc-features-label">Everything in Starter, plus</div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Real-Time Operations Cockpit</span> — live club-wide view</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">F&B Performance Intelligence</span> — margins, covers, conversion</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Pace of Play + Demand Forecasting</span> with weather adjustment</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Staffing Gap Detection</span> — connect complaints to coverage</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">4 Automated Playbooks</span> — Slow Saturday, Service Save, Engagement Decay, Staffing Gap</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">90-day trend history</span> + resignation prediction timeline</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span>Member archetype segmentation</span></div>
-      <div class="pc-feature"><span class="pc-check-muted">○</span><span style="color:rgba(255,255,255,0.25)">AI agent automations</span></div>
-    </div>
-
-    <!-- CLUB -->
-    <div class="pricing-card fade-up fade-up-delay-2">
-      <div class="pc-tier">Club Intelligence</div>
-      <div class="pc-name">Full Platform</div>
-      <div class="pc-tagline">AI agents, board-ready ROI reporting, and the complete Five Lenses platform. Built for clubs ready to lead.</div>
-      <div class="pc-price-row">
-        <div class="pc-price">$1,499</div>
-        <div class="pc-price-unit">/ month</div>
-      </div>
-      <div class="pc-price-note">Per club · Billed annually</div>
-      <a href="#" class="pc-cta pc-cta-club">Contact Sales →</a>
-      <div class="pc-divider"></div>
-      <div class="pc-features-label">Everything in Pro, plus</div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">AI Recovery Agents</span> — auto-draft personal outreach for at-risk members</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Growth Pipeline Intelligence</span> — prospect scoring and conversion tracking</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Board-Ready ROI Reports</span> — dues protected, churn prevented, $$ saved</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">All 5 Lenses</span> — full cross-domain intelligence platform</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span><span class="bold">Unlimited history</span> + year-over-year comparisons</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span>Multi-staff access with role-based views</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span>Dedicated onboarding + CS team</span></div>
-      <div class="pc-feature"><span class="pc-check">✓</span><span>Custom integrations on request</span></div>
-    </div>
-
-  </div>
-</section>
-
-<!-- FEATURES / LENSES -->
-<section class="lenses-section" id="features">
-  <div class="lenses-header">
-    <div class="section-eyebrow">The Five Lenses</div>
-    <h2 class="section-title">One platform. Five complete pictures.</h2>
-    <p class="section-sub">Swoop connects your existing systems and surfaces insights that are invisible when they work in isolation.</p>
-  </div>
-  <div class="lenses-grid">
-    <div class="lens-card lc-gold fade-up">
-      <div class="lens-icon">📋</div>
-      <h3>Daily Briefing</h3>
-      <p>Your morning command center. See who needs attention today, which at-risk members have tee times, and what's trending across the club.</p>
-      <span class="lens-tag tag-free">Free</span>
-    </div>
-    <div class="lens-card lc-green fade-up fade-up-delay-1">
-      <div class="lens-icon">📊</div>
-      <h3>Operations Intelligence</h3>
-      <p>Daily revenue, pace of play, demand forecasting, and weather-adjusted staffing — all connected. See exactly how understaffing hits your bottom line.</p>
-      <span class="lens-tag tag-pro">Pro</span>
-    </div>
-    <div class="lens-card lc-red fade-up fade-up-delay-2">
-      <div class="lens-icon">🎯</div>
-      <h3>Member Health & Retention</h3>
-      <p>Health scores, behavioral archetypes, engagement decay tracking, and resignation prediction. Know who's leaving 6–8 weeks before they do.</p>
-      <span class="lens-tag tag-free">Free → Pro</span>
-    </div>
-    <div class="lens-card lc-blue fade-up">
-      <div class="lens-icon">👥</div>
-      <h3>Staffing & Service Quality</h3>
-      <p>Connect complaints to staffing gaps automatically. Get AI-drafted personal recovery outreach for unhappy members — in one click.</p>
-      <span class="lens-tag tag-pro">Pro</span>
-    </div>
-    <div class="lens-card lc-purple fade-up fade-up-delay-1">
-      <div class="lens-icon">🤖</div>
-      <h3>AI Recovery Agents</h3>
-      <p>When a member's health score drops, Swoop can automatically draft personal outreach, schedule a check-in call, or alert your team — without you lifting a finger.</p>
-      <span class="lens-tag tag-club">Club</span>
-    </div>
-    <div class="lens-card lc-teal fade-up fade-up-delay-2">
-      <div class="lens-icon">📈</div>
-      <h3>Growth Pipeline & ROI Proof</h3>
-      <p>Track prospects, measure conversions, and produce board-ready reports showing exactly how much dues revenue Swoop protected this quarter.</p>
-      <span class="lens-tag tag-club">Club</span>
+    <div class="serve-grid">
+      <a href="#" class="serve-card" id="private">
+        <div class="serve-icon">🏛️</div>
+        <div class="serve-title">Private Clubs</div>
+        <p class="serve-desc">Full five-lens intelligence for dues-based clubs focused on member experience, retention, and exclusive service quality.</p>
+      </a>
+      <a href="#" class="serve-card" id="semi-private">
+        <div class="serve-icon">⛳</div>
+        <div class="serve-title">Semi-Private Clubs</div>
+        <p class="serve-desc">Balance member priorities with public tee time revenue using demand intelligence and waitlist tools tuned for mixed access models.</p>
+      </a>
+      <a href="#" class="serve-card" id="resort">
+        <div class="serve-icon">🌴</div>
+        <div class="serve-title">Resort Destinations</div>
+        <p class="serve-desc">Maximize guest revenue per round while maintaining the exceptional experience that drives return visits and loyalty.</p>
+      </a>
+      <a href="#" class="serve-card" id="multi">
+        <div class="serve-icon">🗺️</div>
+        <div class="serve-title">Multi-Course Operators</div>
+        <p class="serve-desc">Portfolio-level dashboards with per-property drill-down. Identify your best-performing clubs and lift the rest to match.</p>
+      </a>
+      <a href="#" class="serve-card" id="daily-fee">
+        <div class="serve-icon">🎫</div>
+        <div class="serve-title">Daily Fee Courses</div>
+        <p class="serve-desc">Convert high-frequency players into loyalty members and fill cancellation gaps with the highest-value golfers in your database.</p>
+      </a>
+      <a href="#" class="serve-card" id="municipal">
+        <div class="serve-icon">🏛</div>
+        <div class="serve-title">Municipal Courses</div>
+        <p class="serve-desc">Maximize access equity while optimizing revenue. Fair, data-driven waitlist prioritization for public facilities with high demand.</p>
+      </a>
     </div>
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
-<section class="how-section" id="how-it-works">
-  <div class="how-header">
-    <div class="section-eyebrow">Getting Started</div>
-    <h2 class="section-title">Live in under two weeks.</h2>
-    <p class="section-sub">No rip-and-replace. Swoop layers onto your existing systems — we connect them, you run the club.</p>
-  </div>
-  <div class="how-steps">
-    <div class="how-step fade-up">
-      <div class="step-circle">01</div>
-      <h4>Connect Your Systems</h4>
-      <p>Plug into ForeTees, Northstar, Jonas, Club Prophet, and more. Secure, read-only API connections. No IT project required.</p>
+<!-- ═══════════════════════════════ BLOG ══════════════════════════════ -->
+<section class="blog-section" id="resources">
+  <div class="container">
+    <div class="section-header">
+      <span class="label">Insights</span>
+      <h2 class="section-title">From the Swoop Intelligence Team</h2>
     </div>
-    <div class="how-step fade-up fade-up-delay-1">
-      <div class="step-circle">02</div>
-      <h4>Swoop Maps Patterns</h4>
-      <p>Our intelligence engine cross-references data across every platform — finding the decay signals hiding in plain sight.</p>
-    </div>
-    <div class="how-step fade-up fade-up-delay-2">
-      <div class="step-circle">03</div>
-      <h4>Get Your Daily Briefing</h4>
-      <p>Every morning, your dashboard shows who needs attention — at-risk members, complaints, revenue trends, and staffing alerts.</p>
-    </div>
-    <div class="how-step fade-up fade-up-delay-3">
-      <div class="step-circle">04</div>
-      <h4>Act Before It's Too Late</h4>
-      <p>Draft a personal note. Schedule a call. Trigger an AI agent. One-click actions that save members and protect dues revenue.</p>
-    </div>
-  </div>
-</section>
-
-<!-- INTEGRATIONS -->
-<section class="integrations-section" id="integrations">
-  <div class="integrations-header">
-    <div class="section-eyebrow">Integrations</div>
-    <h2 class="section-title">Works with everything you already use.</h2>
-    <p class="section-sub">Eight data sources. Fourteen cross-domain insights. Zero disruption to your workflow.</p>
-  </div>
-  <div class="integrations-grid">
-    <div class="int-chip">💳 Point of Sale</div>
-    <div class="int-chip">⛳ Tee Sheet</div>
-    <div class="int-chip">👥 CRM / Membership</div>
-    <div class="int-chip">🌤️ Weather Service</div>
-    <div class="int-chip">📅 Staff Scheduling</div>
-    <div class="int-chip">🍽️ Dining Reservations</div>
-    <div class="int-chip">📒 Accounting</div>
-    <div class="int-chip">✉️ Email & Comms</div>
-  </div>
-  <div class="int-note">
-    <span>🔒</span>
-    Read-only connections · SOC 2 compliant · No data sold or shared · Your members' data stays yours
-  </div>
-</section>
-
-<!-- QUOTES / TESTIMONIALS -->
-<section class="quotes-section">
-  <div class="quotes-header">
-    <div class="section-eyebrow" style="color:var(--gold-light)">From the Field</div>
-    <h2 class="section-title">What GMs actually said.</h2>
-    <p class="section-sub">Pulled directly from club surveys — these are the words operators used to describe their pain.</p>
-  </div>
-  <div class="quotes-grid">
-    <div class="quote-card fade-up">
-      <div class="quote-mark">"</div>
-      <div class="quote-text">I can feel when we're off, but I can't prove it until it's too late.</div>
-      <div class="quote-author">
-        <div class="qa-avatar">GM</div>
-        <div>
-          <div class="qa-name">General Manager</div>
-          <div class="qa-role">Mid-Atlantic Private Club</div>
+    <div class="blog-grid">
+      <a href="#" class="blog-card">
+        <div class="blog-img">📊</div>
+        <div class="blog-body">
+          <div class="blog-cat">GM Strategy</div>
+          <div class="blog-title">Why Private Clubs Are Moving Beyond Tee Sheet Software</div>
+          <p class="blog-excerpt">The GM's role has evolved. Here's why the best clubs in the country are replacing isolated tools with integrated decision intelligence.</p>
+          <div class="blog-meta">
+            <div class="blog-author">Swoop Intelligence Team · Feb 28, 2026</div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="quote-card fade-up fade-up-delay-1">
-      <div class="quote-mark">"</div>
-      <div class="quote-text">I manage by anecdote. By the time I see the data, the damage is done.</div>
-      <div class="quote-author">
-        <div class="qa-avatar">GM</div>
-        <div>
-          <div class="qa-name">General Manager</div>
-          <div class="qa-role">Southeast Country Club</div>
+      </a>
+      <a href="#" class="blog-card">
+        <div class="blog-img gold-grad">💡</div>
+        <div class="blog-body">
+          <div class="blog-cat">Member Retention</div>
+          <div class="blog-title">The Hidden Signals That Predict Member Resignation 90 Days Out</div>
+          <p class="blog-excerpt">Engagement decay doesn't happen overnight. Learn the five behavioral patterns that predict churn — and how to intervene before the letter arrives.</p>
+          <div class="blog-meta">
+            <div class="blog-author">Dr. Lisa Chen · Feb 14, 2026</div>
+          </div>
         </div>
-      </div>
-    </div>
-    <div class="quote-card fade-up fade-up-delay-2">
-      <div class="quote-mark">"</div>
-      <div class="quote-text">I have a CRM, but it's a database, not an early warning system. It tells me who members are, not how they're feeling.</div>
-      <div class="quote-author">
-        <div class="qa-avatar">GM</div>
-        <div>
-          <div class="qa-name">General Manager</div>
-          <div class="qa-role">Midwest Private Club</div>
+      </a>
+      <a href="#" class="blog-card">
+        <div class="blog-img blue-grad">🤖</div>
+        <div class="blog-body">
+          <div class="blog-cat">AI & Technology</div>
+          <div class="blog-title">How AI Playbooks Are Replacing Manual GM Decision-Making</div>
+          <p class="blog-excerpt">The GMs using Swoop's AI playbooks are making faster, better decisions with less information overload. A look at how the technology actually works.</p>
+          <div class="blog-meta">
+            <div class="blog-author">Marcus Webb · Jan 30, 2026</div>
+          </div>
         </div>
-      </div>
+      </a>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="#" class="btn-ghost">View All Articles →</a>
     </div>
   </div>
 </section>
 
-<!-- CTA -->
-<section class="cta-section" id="cta">
-  <div class="cta-inner">
-    <div class="section-eyebrow">Ready to See the Full Picture?</div>
-    <h2 class="cta-title">Every week you wait,<br>another member <em>quietly walks away.</em></h2>
-    <p class="cta-sub">Start with your free Member Health Scores today. No credit card. No commitment. Just the visibility every GM should have.</p>
-    <div class="cta-buttons">
-      <a href="#" class="btn-cta-primary">Get Started Free →</a>
-      <a href="#" class="btn-cta-free">Book a Demo Instead</a>
+<!-- ════════════════════════════ FINAL CTA ════════════════════════════ -->
+<section class="final-cta" id="demo">
+  <div class="hero-grid"></div>
+  <div class="final-cta-inner">
+    <span class="label" style="color:rgba(201,148,58,.8)">Get Started</span>
+    <h2>Join Hundreds of Clubs Capturing <em>Every Opportunity</em></h2>
+    <p>Book a demo and discover how Swoop's Five Lenses can transform your GM decision-making — and start recovering revenue in your first week.</p>
+    <div class="cta-actions">
+      <a href="#" class="btn-primary">Book a Demo →</a>
+      <a href="#" class="btn-outline-white">Talk to Sales</a>
     </div>
-    <div class="risk-stat">
-      <span class="rs-icon">⚠️</span>
-      The average private club loses <strong>&nbsp;$140K+&nbsp;</strong> in preventable resignations per year.
-    </div>
+    <div class="contact-email">Questions? <a href="mailto:sales@swoopgolf.com">sales@swoopgolf.com</a></div>
   </div>
 </section>
 
-<!-- FOOTER -->
+<!-- ════════════════════════════ FOOTER ══════════════════════════════ -->
 <footer>
-  <div class="footer-brand">
-    <div class="logo-mark">S</div>
-    <span>Swoop Golf</span>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <span class="logo-word">Swoop<span> Golf</span></span>
+      <p>The Five Lenses decision-support platform for private club General Managers. Fill tee times with the right members.</p>
+      <div style="margin-top:20px"><div class="soc2-badge">🔒 SOC 2 Type II Certified</div></div>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <a href="#">Overview</a>
+      <a href="#">Daily Briefing</a>
+      <a href="#">Operations Lens</a>
+      <a href="#">Revenue & F&B</a>
+      <a href="#">Member Retention</a>
+      <a href="#">Staffing & Service</a>
+      <a href="#">Growth Pipeline</a>
+    </div>
+    <div class="footer-col">
+      <h4>Who We Serve</h4>
+      <a href="#">Private Clubs</a>
+      <a href="#">Semi-Private Clubs</a>
+      <a href="#">Resort Destinations</a>
+      <a href="#">Multi-Course Operators</a>
+      <a href="#">Daily Fee Courses</a>
+      <a href="#">Municipal Courses</a>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <a href="#">Blog</a>
+      <a href="#">Case Studies</a>
+      <a href="#">Content Library</a>
+      <a href="#">Events & Webinars</a>
+      <a href="#">About Swoop</a>
+      <a href="#">Careers</a>
+      <a href="#">Book a Demo</a>
+    </div>
   </div>
-  <div class="footer-tagline">Integrated Intelligence for Private Clubs</div>
-  <div class="footer-links">
-    <a href="#">Privacy</a>
-    <a href="#">Terms</a>
-    <a href="#">Contact</a>
-    <a href="mailto:ty@swoopgolf.com">ty@swoopgolf.com</a>
+  <div class="footer-bottom">
+    <span>© 2026 Swoop Golf, Inc. All rights reserved.</span>
+    <div class="footer-bottom-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Accessibility</a>
+      <a href="#">FAQ</a>
+    </div>
   </div>
 </footer>
 
 <script>
-// Scroll-triggered fade-up animations
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(el => {
-    if (el.isIntersecting) {
-      el.target.classList.add('visible');
+// ── Calculator ──
+function calcUpdate() {
+  const members = parseInt(document.getElementById('membersSlider').value);
+  const dues = parseInt(document.getElementById('duesSlider').value);
+  const tees = parseInt(document.getElementById('teesSlider').value);
+  const days = parseInt(document.getElementById('daysSlider').value);
+
+  document.getElementById('membersVal').textContent = members;
+  document.getElementById('duesVal').textContent = '$' + dues.toLocaleString();
+  document.getElementById('teesVal').textContent = tees;
+  document.getElementById('daysVal').textContent = days;
+
+  // Update range background fill
+  ['membersSlider','duesSlider','teesSlider','daysSlider'].forEach(id => {
+    const el = document.getElementById(id);
+    const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+    el.style.background = `linear-gradient(90deg, #2A4A2C ${pct}%, #D4E4D6 ${pct}%)`;
+  });
+
+  // Revenue estimate formula
+  const opsRecovery = tees * days * 0.18 * 42;        // 18% cancellation rate, $42 avg green fee
+  const fbUplift = members * dues * 0.009;              // 0.9% F&B lift
+  const retentionValue = members * dues * 0.025;        // 2.5% churn prevention
+  const staffingSavings = tees * days * 0.4;            // staffing efficiency
+  const pipelineValue = members * 0.04 * dues * 0.3;   // pipeline conversion
+  const total = opsRecovery + fbUplift + retentionValue + staffingSavings + pipelineValue;
+
+  document.getElementById('calcResult').textContent = '$' + Math.round(total / 1000) * 1000 > 0
+    ? '$' + (Math.round(total / 1000) * 1000).toLocaleString()
+    : '$0';
+}
+
+// ── Nav scroll style ──
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (window.scrollY > 40) {
+    nav.style.borderBottomColor = 'rgba(201,148,58,.2)';
+  } else {
+    nav.style.borderBottomColor = 'rgba(201,148,58,.12)';
+  }
+});
+
+// ── Intersection observer for fade-up ──
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      e.target.style.transition = 'opacity .7s ease, transform .7s ease';
     }
   });
-}, { threshold: 0.12 });
+}, { threshold: 0.1 });
 
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+document.querySelectorAll('.lens-card,.proof-card,.testi-card,.serve-card,.blog-card,.spotlight-visual,.spotlight-text').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(24px)';
+  obs.observe(el);
+});
 
-// Smooth counter animations for hero stats
-function animateCount(el, target, suffix = '', duration = 1800) {
-  const start = performance.now();
-  const isFloat = target.toString().includes('.');
-  const update = (time) => {
-    const progress = Math.min((time - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const val = isFloat ? (ease * target).toFixed(1) : Math.floor(ease * target);
-    el.textContent = val + suffix;
-    if (progress < 1) requestAnimationFrame(update);
-  };
-  requestAnimationFrame(update);
-}
+// Init calc
+calcUpdate();
 </script>
 </body>
 </html>
